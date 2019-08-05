@@ -1,0 +1,94 @@
+GUI hierarchy:
+
+Frame (BankFrame)
+	-SplitPane (WelcomePanel)
+		-Panel
+			-Label
+		-Panel
+			-Button
+			-Button
+	-TabbedPane (BankPanel)
+		-SplitPane (ManagerPanel)
+			-Panel (Mgr_WelcomPanel) (top)
+				-Label
+			-ScrollPane (Mgr_ClientsPanel) (top)
+				-Viewport
+					-labels
+					-buttons
+						-Frame (Mgr_ClientDetailFrame) (new)
+							-Combobox
+							-labels
+			-SplitPane (Mgr_ReportsPanel) (top)
+				-Panel (top) 
+					-labels
+				-ScrollPane (bottom)
+					-Header
+						-labels
+					-Viewport
+						-Panel
+							-labels
+						-Panel
+							-labels
+						-Panel
+							-labels
+			-Panel (Mgr_EditPanel) (top)
+				-labels
+				-textFields
+				-Panel
+					-Button
+					-Button
+			-Panel (Bottom)
+				-Button
+				-Button
+				-Button
+		-Panel (ClientPanel)
+			- SplitPane (Clt_WelcomePanel)
+				-Panel (top)
+					-Label
+				-Panel (bottom)
+					-Combobox
+					-Button
+			- ScrollPane (Clt_ClientPanel)
+				-Viewport
+					-Panel
+						-Label
+						-Panel
+							-Button
+							-Panel
+								-Label
+								-Combobox
+					-Panel
+						-Panel * 2
+							-Label
+							-Panel
+								-Combobox
+								-Button
+								-Label
+								-Combobox
+								-FormattedTextField
+								-FormattedTextField
+								-Button
+					-Panel 
+						Label
+						Panel
+							Combobox
+							Button
+						Panel
+							Button
+			- ScrollPane (Clt_AccountPanel)
+				-Viewport
+					-SplitPane
+						-Panel (Left)
+							-Label
+							-Label
+							-Label
+							-Panel
+								-Button
+								-Button
+						-Panel (Right)
+							-Button
+							-Button
+							-Button
+							-Button
+					-Panel
+						-labels

@@ -1,0 +1,73 @@
+bank_atm.gui
+
+BankFrame:
+	The Main JFrame of the GUI.	Starts of as the WelcomePanel
+	Switch to the BankPanel when one of the buttons in WelcomePanel are pressed
+	
+WelcomePanel
+	First Panel in the GUI.
+	Contains two button, both of which leads to the BankPanel.
+	The first button leads to the first tab and the second button leads to the second tab
+	
+BankPanel
+	The Main Panel of the GUI. Most work is done in this Panel and its Children
+	Contains two tabs: a ManagerPanel and a ClientPanel.
+	After the WelcomePanel, depending on the button pressed, lands on one of these panels
+	Able to switch between the two tabs easily
+	When switch to another tab, land of the welcome panel of the respective tab
+	
+ManagerPanel
+	The Panel for the manager. Is a SplitPane.
+	The top Component can be Mgr_WelcomePanel, Mgr_ClientPanel, Mgr_ReportPanel or Mgr_EditPanel
+	When first getting into the ManagerPanel, Mgr_WelcomePanel is shown.
+	The bottom Component is always fixed. It contains three buttons.
+	The top Component will switch based on the button pressed
+	
+Mgr_WelcomePanel
+	The welcome panel of the ManagerPanel. Contains a label
+	
+Mgr_ClientPanel
+	Gets and shows all clients and their data
+	Have a button to show more details that opens a new Mgr_ClientDetailFrame
+	
+Mgr_ClientDetailFrame
+	Creates a new JFrame outside of BankFrame.
+	Gets and shows all Transactions made by the ClientAccount
+	
+Mgr_ReportPanel
+	A SplitPane. The top contains a basic report. The bottom contains the detailed report.
+	Basic report is made of 6 labels showing Fee, LoanInterest, and SavingsInterest of all ClientAccount
+	Detail report shows its Transactions
+	Resets the report at the end.
+	
+Mgr_EditPanel
+	Contains Labels and JFormattedTextField. 
+	Allows manager to change the fees and interest percent.
+	Contains a button that saves the changes.
+	Contains another button that, when pressed, causes all account to get interest.
+	However, interest may have no effect on some account e.g. CheckingAccount
+	
+ClientPanel
+	The Panel for the manager
+	Contains Clt_AccountPanel, Clt_ClientPanel, Clt_WelcomePanel.
+	Only of of these panel is displayed at a time.
+	Clt_WelcomePanel is the default panel.
+	
+Clt_WelcomePanel
+	The Welcome screen for the clients
+	Have a editable JComoboBox that selects the account
+	Then loads the selected/created Account into Clt_ClientPanel
+
+Clt_ClientPanel
+	Contains 3 main panels.
+	The first is a message, and contains button for log out, and pref currency
+	The second is shows all Account.
+	The third shows all loans and can ask for more loans
+	
+Clt_AccountPanel
+	Contains data on the account, and all transactions made with the account.
+	Can make ClientTransactions.
+	Can also request loan and close account.
+	
+Currency.
+	enum used to store currency, its symobl and conversion to USD.
