@@ -18,6 +18,14 @@ public class Name {
 		this.lname = lname;
 	}
 	
+	public String getFname() {
+		return fname;
+	}
+
+	public String getLname() {
+		return lname;
+	}
+	
 	public String toString() {
 		if (mname == null)
 			return (fname + " " + lname);

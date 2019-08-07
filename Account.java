@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class Account {
@@ -8,8 +10,8 @@ public class Account {
 	private String accountID;
 	protected Date dateOpened;
 	
-	protected Transaction[] transactions = new Transaction[64];
-	protected int tindex = 0;
+	protected ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+	
 	
 	private Date globalDate; // MOVE SOMEWHERE ELSE? 
 	
@@ -51,18 +53,16 @@ public class Account {
 		return type;
 	}
 	
-	public Transaction[] getTransactions() {
-		return transactions;
+	public ArrayList<Transaction> getTransactions() {
+		return this.transactions;
 	}
 	
-	
-	public int getTransactionIndex() {
-		return tindex;
-	}
-	
-	
-	public void incrementTransactionIndex() {
-		tindex++;
+	public String getStringTransactions() {
+		String s = "";
+		for (int i = 0; i <transactions.size(); i++) {
+			s += transactions.get(i).toString() + "\n";
+		}
+		return s;
 	}
 	
 	
@@ -86,9 +86,10 @@ public class Account {
 			Transaction t = null;
 			if (takeOut(amount) != -1)
 				// make transaction
+				makeTransaction("fee", Fee.Transfer.amount, reference, tdate );
 				t = new Transaction(tdate, this, amount, reference, type);
-				transactions[tindex] = t;
-				tindex++;
+				transactions.add(t);
+				
 				return true;
 		}
 		else if (action.equals("receipt")) { // receiving money to account 
@@ -97,8 +98,8 @@ public class Account {
 			deposit(amount, getCurrency());
 			// make transaction
 			t = new Transaction(tdate, this, amount, reference, type);
-			transactions[tindex] = t;
-			tindex++;
+			transactions.add(t);
+			
 			return true;
 		}
 		
@@ -109,8 +110,17 @@ public class Account {
 			deposit(amount, getCurrency());
 			// make transaction 
 			t = new Transaction(tdate, this, amount, reference, type);
-			transactions[tindex] = t;
-			tindex++;
+			transactions.add(t);
+			
+			return true;
+		} 
+		else if (action.equals("fee")) {
+			String type = "OUT";
+			Transaction t;
+			takeOut(amount);
+			t = new Transaction(tdate, this, amount, reference, type);
+			transactions.add(t);
+			
 			return true;
 		}
 		
@@ -121,22 +131,33 @@ public class Account {
 	
 	
 	public boolean transfer(Account acc, double amount, Date tdate) {
-		if (this.getCurrency().equals(acc.getCurrency())) {
+		
+		if ( !this.getCurrency().getAcronym().equals(acc.getCurrency().getAcronym() )) {
+			Currency currOther = acc.getCurrency();
+			double amountNew = currency.convertTo(amount, currOther.getAcronym());
+			
 			this.takeOut(amount);
-			acc.deposit(amount, currency);
+			acc.deposit(amountNew, currOther);
 			Transaction t,t2 = null;
 			t = new Transaction(tdate, this, amount, "Transfer " + acc.getID(), "OUT");
-			transactions[tindex] = t;
-			tindex++;
-			t2 = new Transaction(tdate, acc, amount, "Transfer " + this.getID(), "IN");
-			acc.getTransactions()[acc.getTransactionIndex()] = t2;
-			acc.incrementTransactionIndex();
-			// TODO MAKE TRANSACTION ON THIS ACCOUNT AND ACC
+		
+			transactions.add(t);
+			t2 = new Transaction(tdate, acc, amountNew, "Transfer " + this.getID(), "IN");
+			
+			acc.getTransactions().add(t2);
+
 			return true;
 		}
 		else {
-			System.out.println("Transfer failed. The accounts are based in different currencies.");
-			return false;
+			this.takeOut(amount);
+			acc.deposit(amount, acc.getCurrency());
+			Transaction t = new Transaction(tdate, this, amount, "Transfer " + acc.getID(), "OUT");
+			Transaction t2 = new Transaction(tdate, acc, amount, "Transfer " + this.getID(), "IN");
+
+			transactions.add(t);
+			acc.getTransactions().add(t2);
+
+			return true;
 		}
 	}
 	
@@ -154,6 +175,8 @@ public class Account {
 		}
 	}
 	
+	
+	
 	public double takeOut(double money) {
 		if (Math.round(money * 100.00) / 100.00 <= balance) {
 			balance -= Math.round(money * 100.00) / 100.00;
@@ -164,6 +187,8 @@ public class Account {
 			return -1;
 		}
 	}
+	
+	
 	
 	public boolean changeAccountCurrency(Currency cur) {
 		if (getCurrency().equals(cur)) {
@@ -178,16 +203,20 @@ public class Account {
 		}
 	}
 	
+	
+	
 	public String toString() {
 		return balance + " " + currency;
 	}
 	
+	
+	
 	public String displayTransactions() {
 		String res = "<html>";
-		for (int i = 0; i < transactions.length; i++) {
-			if (transactions[i] == null) 
+		for (int i = 0; i < transactions.size(); i++) {
+			if (transactions.get(i) == null) 
 				return res;
-			res+= transactions[i] + "<br/>";
+			res+= transactions.get(i) + "<br/>";
 		}
 		return res+"</html>";
 	}
@@ -195,28 +224,29 @@ public class Account {
 //	public static void main(String[] args) {
 //		Currency USD = new Currency("USD", "Dollars");
 //		Currency RUB = new Currency("RUB", "Rubles");
-//		System.out.println(USD.convertTo(500, "RUB"));
-//		
+////		System.out.println(USD.convertTo(500, "RUB"));
+////		
 //		Account c = new Account(500,USD);
 //		c.deposit(500.53512312, USD);
 //		System.out.println(c);
 //		c.takeOut(50.544);
 //		System.out.println(c);
 //		
-//		Account d = new Account(100,USD);
-//		//c.transfer(d, 50);
+//	    Account d = new Account(100,RUB);
+//	    System.out.println(d);
+//		c.transfer(d, 50, Date.getCurrentDate());
 //		System.out.println(c);
-////		System.out.println(d);
+//		System.out.println(d);
+//////		
+//////		d.changeAccountCurrency(RUB);
+//////		System.out.println(d);
 ////		
-////		d.changeAccountCurrency(RUB);
-////		System.out.println(d);
-//		
-//		Date date = new Date(1,1,1990);
-//		c.makeTransaction("payment", 25.50, "Dominos", date);
-//		c.makeTransaction("deposit", 5.50, "Dominos", date);
-//		c.makeTransaction("receipt", 15.00, "Work", date);
-//		System.out.println(c);
-//		System.out.println(c.displayTransactions());
+////		Date date = new Date(1,1,1990);
+////		c.makeTransaction("payment", 25.50, "Dominos", date);
+////		c.makeTransaction("deposit", 5.50, "Dominos", date);
+////		c.makeTransaction("receipt", 15.00, "Work", date);
+////		System.out.println(c);
+////		System.out.println(c.displayTransactions());
 //	}
 	
 	

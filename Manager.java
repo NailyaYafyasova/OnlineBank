@@ -1,5 +1,14 @@
-public class Manager extends Person{
+import java.util.ArrayList;
+import java.util.Scanner;
 
+public class Manager extends Person{
+	
+	private static ArrayList<LoanRequest> loanRequests = new ArrayList<LoanRequest>();
+
+	public static final Manager manager = new Manager("Jane", "Doe", "jd");
+	public static Date currentSystemDate = new Date();
+	
+	
 	public Manager(String fname, String lname, String login) {
 		super(fname, lname, login);
 	}
@@ -8,14 +17,60 @@ public class Manager extends Person{
 		super(fname, mname, lname, login);
 	}
 	
-	public String toString() {
-		return ( "Manager " + this.name() );
+
+	public static void updateDate(Date newDate) {
+		currentSystemDate = newDate;
 	}
 	
-	// need to know how the Bank works
+	public static void addLoanRequests(LoanRequest loan) {
+		loanRequests.add(loan);
+	}
+	
+	
+	public static boolean considerLoan(LoanRequest loan) {
+		if (loan.amount() <= loan.collateral())
+			return true;
+		return false;
+	}
+	
+	
+	public static void approveLoan(Client client, LoanRequest loan) {
+		if (considerLoan(loan)) {
+			Scanner scan = new Scanner(System.in);
+			System.out.println("Please indicate the annual interest rate");
+			double interest = scan.nextDouble();
+			System.out.println("Please indicate the due date by entering the month, date, and year on separate lines");
+			int month = scan.nextInt();
+			int day = scan.nextInt();
+			int year = scan.nextInt();
+			
+			Date dueDate = new Date(month,day,year);
+			client.getLoan(loan.amount(), loan.collateral(), loan.currency(), dueDate, interest);
+		}
+	}
+	
+	// CONNECT TO SECURITIES AND DATABASE
+	public void updateSecurityPrice(Security security, double newPrice) {
+		BankDatabase.updateSecurity(newPrice);
+		// HOW TO RECORD THIS???
+	}
+	
+//	// CONNECT TO SECURITIES AND DATABASE
+//	public boolean addSecurity(Portfolio portfolio, Enum<?> item, double amount) {
+//		return portfolio.buy(item, amount);
+//	}
+	
+	// CONNECT TO SECURITIES AND DATABASE
+	public void viewSecurities() {
+		
+	}
+	
+	
+	
+	// CONNECT TO THE DATABASE
 	public String checkClient(Client customer) {
-		Client client = Database.getClient(customer);
-		String s = client.viewBalances();
+		Client client = BankDatabase.getClient(customer);
+		//String s = client.viewBalances();
 		
 		if (client.hasLoan()) {
 			for (int i = 0; i < client.getAccounts().size(); i++) {
@@ -30,9 +85,13 @@ public class Manager extends Person{
 	}
 	
 	
-	// need to know how the Bank works;
+	// CONNECT TO THE DATABASE
 	public String getDailyReport(Date tdate) {
 		return Database.getDailyReport(tdate);
+	}
+	
+	public String toString() {
+		return ( "Manager " + this.name() );
 	}
 
 }

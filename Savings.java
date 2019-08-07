@@ -36,18 +36,17 @@ public class Savings extends Account {
 			if (takeOut(amount) != -1)
 				// make transaction
 				t = new Transaction(tdate, this, amount, reference, type);
-				transactions[tindex] = t;
-				tindex++;
+				transactions.add(t);
+				
 				return true;
 		}
+		
 		else if (action.equals("receipt")) { // receiving money to account 
 			String type = "IN";
-			Transaction t;
 			deposit(amount, getCurrency());
-			// make transaction
-			t = new Transaction(tdate, this, amount, reference, type);
-			transactions[tindex] = t;
-			tindex++;
+			Transaction t = new Transaction(tdate, this, amount, reference, type);
+			transactions.add(t);
+			
 			
 			if (over10 != null) {
 				if (this.getBalance() >= 10000) {
@@ -58,15 +57,15 @@ public class Savings extends Account {
 			return true;
 		}
 		
+		
 		else if (action.equals("deposit")) { // depositing money to own account
 			String type = "IN";
-			Transaction t;
 			reference = "Deposit";
 			deposit(amount, getCurrency());
 			// make transaction 
-			t = new Transaction(tdate, this, amount, reference, type);
-			transactions[tindex] = t;
-			tindex++;
+			Transaction t = new Transaction(tdate, this, amount, reference, type);
+			transactions.add(t);
+			
 			
 			if (over10 != null) {
 				if (this.getBalance() >= 10000) {
@@ -74,6 +73,16 @@ public class Savings extends Account {
 					newDate = new Date(over10.getMonth(),over10.getDay(),over10.getYear()+1);
 				}
 			}
+			return true;
+		}
+		
+		else if (action.equals("fee")) {
+			String type = "OUT";
+			Transaction t;
+			takeOut(amount);
+			t = new Transaction(tdate, this, amount, reference, type);
+			transactions.add(t);
+			
 			return true;
 		}
 		
@@ -83,16 +92,19 @@ public class Savings extends Account {
 	
 	
 	public boolean transfer(Account acc, double amount, Date tdate) {
-		if (this.getCurrency().equals(acc.getCurrency())) {
+		if ( !this.getCurrency().getAcronym().equals(acc.getCurrency().getAcronym() )) {
+			Currency currOther = acc.getCurrency();
+			double amountNew = currency.convertTo(amount, currOther.getAcronym());
+			
 			this.takeOut(amount);
-			acc.deposit(amount, currency);
+			acc.deposit(amountNew, currOther);
 			Transaction t,t2 = null;
 			t = new Transaction(tdate, this, amount, "Transfer " + acc.getID(), "OUT");
-			transactions[tindex] = t;
-			tindex++;
-			t2 = new Transaction(tdate, acc, amount, "Transfer " + this.getID(), "IN");
-			acc.getTransactions()[acc.getTransactionIndex()] = t2;
-			acc.incrementTransactionIndex();
+		
+			transactions.add(t);
+			t2 = new Transaction(tdate, acc, amountNew, "Transfer " + this.getID(), "IN");
+			
+			acc.getTransactions().add(t2);
 			
 			if (over10 != null) {
 				if (this.getBalance() >= 10000) {
@@ -103,9 +115,23 @@ public class Savings extends Account {
 			return true;
 		}
 		else {
-			System.out.println("Transfer failed. The accounts are based in different currencies.");
-			return false;
+			this.takeOut(amount);
+			acc.deposit(amount, acc.getCurrency());
+			Transaction t = new Transaction(tdate, this, amount, "Transfer " + acc.getID(), "OUT");
+			Transaction t2 = new Transaction(tdate, acc, amount, "Transfer " + this.getID(), "IN");
+
+			transactions.add(t);
+			acc.getTransactions().add(t2);
+			if (over10 != null) {
+				if (this.getBalance() >= 10000) {
+					over10 = Date.getCurrentDate();
+					newDate = new Date(over10.getMonth(),over10.getDay(),over10.getYear()+1);
+				}
+			}
+			
+			return true;
 		}
+		
 	}
 	
 	

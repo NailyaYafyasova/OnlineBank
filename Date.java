@@ -18,6 +18,11 @@ public class Date {
 	}
 	
 	
+	public int differenceInDays(Date other) {
+		return ( (other.getYear() - getCurrentDate().getYear())*12 + (other.getMonth() - getCurrentDate().getMonth())*30 + (other.getDay() - getCurrentDate().getDay()) );
+	}
+	
+	
 	public int getMonth() {
 		return month;
 	}
@@ -28,6 +33,21 @@ public class Date {
 	
 	public int getYear() {
 		return year;
+	}
+	
+	public void updateTime(int month, int day, int year) {
+		this.month = month;
+		this.day = day;
+		this.year = year;
+	}
+	
+	public Date updatedDate() {
+		return this;
+	}
+	
+	
+	public static int differenceInMonths(Date other) {
+		return ( (other.getYear() - getCurrentDate().getYear())*12 + other.getMonth() - getCurrentDate().getMonth() );
 	}
 	
 	public boolean equals(Date other) {

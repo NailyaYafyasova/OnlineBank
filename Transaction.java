@@ -1,22 +1,29 @@
 public class Transaction {
 	
-	private Date date;
+	protected Date date;
 	private double amount;
-	private double newBalance;
+	protected double newBalance;
 	private String accountID;
 	private String reference;
-	private String type; // IN OR OUT
+	protected String type; // IN OR OUT
 	
 
+	public Transaction() {
+		this.date = Date.getCurrentDate();
+	}
+	
 	public Transaction(Date date, Account acc, double amount, String reference, String type) {
 		this.date = date;
-//		System.out.println(date);
 		
 		this.amount = amount;
 		this.reference = reference;
 		this.type = type;
 		newBalance = acc.getBalance();
 		accountID = acc.getID();
+	}
+	
+	public String type() {
+		return type;
 	}
 	
 	
