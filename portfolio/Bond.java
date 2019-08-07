@@ -1,29 +1,26 @@
 package fancy_bank.portfolio;
 
-public enum Bond{
-	Test(1),
-	Test2(2);
+public class Bond extends Security {
 	
-	protected int price;
-	protected double interest1, interest2, interest3;
-	protected long interest1Time, interest2Time, interest3Time;
+	public final BondItem bondItem;
+	public final long buyTime;
 	
-	private Bond(int id) {
-		loadFromDatabase();
+	public Bond(BondItem bondIem) {
+		this.bondItem = bondIem;
+		buyTime = System.currentTimeMillis();
 	}
 	
-	public static void update() {
-		for(Bond bond : values()) {
-			bond.loadFromDatabase();
-		}
+	@Override
+	public double getCurrentValue(double amount) {
+		long timePassed = 0;		
+		// timePassed = Bank.time - buyTime
+		return bondItem.price * ((timePassed > bondItem.interestTime) ? bondItem.interestRate : 1);
 	}
-	
-	private void loadFromDatabase() {
-		// to-do update prices and interests from database
-		// Bankdatabase.getbonddata(this
-		
-		
-		// getter
-		// bond.price = price;
+
+	@Override
+	public Enum<?> getItem() {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
 }

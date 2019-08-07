@@ -1,33 +1,18 @@
 package fancy_bank.portfolio;
 
 public abstract class Security {
-	public final double buyPrice;
-	protected double currecntPrice;
+	protected double buyPrice;
+	protected double currentPrice;
 	protected double amount;
-		
-	protected Security(double amount, double pricePer) {
-		this.amount = amount;
-		this.buyPrice = pricePer * amount;
-	}
+	
+	public Security() { }
 	
 	public double getCurrentValue() { return getCurrentValue(amount); }
 	public abstract double getCurrentValue(double amount);
 	
-	public double getUnforseenValue() {
+	public double getUnrealized() {
 		return getCurrentValue() - buyPrice;
 	}
 	
-	public void buy(double amount) {
-		this.amount += amount;
-	}
-	
-	public double sell(double amount) {
-		double value = getCurrentValue(amount);
-		this.amount -= amount;
-		return value;
-	}
-	
-	public double sellAll() {
-		return sell(amount);
-	}
+	public abstract Enum<?> getItem();
 }

@@ -1,24 +1,21 @@
 package fancy_bank.portfolio;
 
-public enum Stock {
-	Apple(0, "APPL"),
-	Google(1, "GOOG");
+public class Stock extends Security {
+
+	protected StockItem stockItem;
 	
-	public final String ticker;
-	protected int price;
-	
-	private Stock(int id, String ticker) {
-		this.ticker = ticker.toUpperCase();
-		loadFromDatabase();
+	public Stock(StockItem stockItem) {
+		this.stockItem = stockItem;
+	}
+
+	@Override
+	public double getCurrentValue(double amount) {
+		return amount * stockItem.price;
 	}
 	
-	public static void update() {
-		for(Stock stock : values()) {
-			stock.loadFromDatabase();
-		}
+	@Override
+	public StockItem getItem() {
+		return stockItem;
 	}
-	
-	private void loadFromDatabase() {
-		
-	}
+
 }
