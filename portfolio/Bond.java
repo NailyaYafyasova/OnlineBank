@@ -4,11 +4,13 @@ public enum Bond{
 	Test(1),
 	Test2(2);
 	
+	protected final int id;
 	protected int price;
 	protected double interest1, interest2, interest3;
 	protected long interest1Time, interest2Time, interest3Time;
 	
 	private Bond(int id) {
+		this.id = id;
 		loadFromDatabase();
 	}
 	
@@ -19,11 +21,6 @@ public enum Bond{
 	}
 	
 	private void loadFromDatabase() {
-		// to-do update prices and interests from database
-		// Bankdatabase.getbonddata(this
-		
-		
-		// getter
-		// bond.price = price;
+		BankDatabase.loadBond(this);
 	}
 }
