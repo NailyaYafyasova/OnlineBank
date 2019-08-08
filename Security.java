@@ -1,7 +1,6 @@
 public abstract class Security {
 	
 	protected double buyPrice;
-	protected double currentPrice;
 	protected double amount;
 	protected String type;
 	
