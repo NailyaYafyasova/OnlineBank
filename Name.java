@@ -19,11 +19,23 @@ public class Name {
 	}
 	
 	public String toString() {
-		if (mname == null)
+		//if (mname == null) {
+		if (mname.equals("UNDEFINED")) {
 			return (fname + " " + lname);
-		else
+		}
+		else {
 			return (fname + " " + mname + " " + lname);
+		}
 	}
 	
+	// get fname of user (for 
+	public String getFname() {
+		return fname;
+	}
+	
+	// get lname of user (for DB)
+	public String getLname() {
+		return lname;
+	}
 
 }

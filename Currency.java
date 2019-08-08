@@ -20,7 +20,6 @@ public class Currency {
 		this.name = name;
 	}
 	
-	
 	public double toEURO(double amount) {
 		for (int i = 0; i < currencies.length; i++) {
 			if (currencies[i].getAcronym().equals(this.acronym)) 

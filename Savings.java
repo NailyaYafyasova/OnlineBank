@@ -26,6 +26,15 @@ public class Savings extends Account {
 		}
 	}
 	
+	public Savings(double amount, Currency curr, String accountid) {
+		super(amount, curr, accountid);
+		type = "Savings";
+		if (amount >= 10000) {
+			over10 = Date.getCurrentDate();
+			newDate = new Date(over10.getMonth(),over10.getDay(),over10.getYear()+1);
+		}
+	}
+	
 	
 	public boolean makeTransaction(String action, double amount, String reference, Date tdate) {
 		// new transaction(date, action, amount, account, reference)

@@ -19,6 +19,53 @@ public class Transaction {
 		accountID = acc.getID();
 	}
 	
+	public Transaction(Date date, Account acc, double amount, String reference, String type, String accountID) {
+		this.date = date;
+//		System.out.println(date);
+		
+		this.amount = amount;
+		this.reference = reference;
+		this.type = type;
+		newBalance = acc.getBalance();
+		this.accountID = accountID;
+	}
+	
+	public Transaction(Date date, Account acc, double amount, double newbalance, String reference, String type, String accountID) {
+		this.date = date;
+//		System.out.println(date);
+		
+		this.amount = amount;
+		this.reference = reference;
+		this.type = type;
+		newBalance = newbalance;
+		this.accountID = accountID;
+	}
+	
+	// next methods are new (mainly for database use)
+	public String getReference() {
+		return this.reference;
+	}
+	
+	public double getNewBalance() {
+		return this.newBalance;
+	}
+	
+	public String getType() {
+		return this.type;
+	}
+	
+	public String getAccountID() {
+		return this.accountID;
+	}
+	
+	public double getAmount() {
+		return this.amount;
+	}
+	
+	// getter method for date
+	public Date getDateInitialized() {
+		return this.date;
+	}
 	
 	public String toString() {
 		String sym = "";

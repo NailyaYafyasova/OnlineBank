@@ -97,6 +97,13 @@ public class clientCreate extends JPanel {
 				
 				Client c = new Client(fname,mname,lname,login);
 				c.setPassword(password);
+				Database.addClient(c);
+				
+				// add new client to DB
+				BankDatabase.addUser(c);
+				
+				// set client's userID field
+				c.setUserID(BankDatabase.getLastID("Clients", "userID"));
 				
 				JPanel panel_New = clientLogin.init(frame);
 				

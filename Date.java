@@ -40,6 +40,11 @@ public class Date {
 		return month + "/" + day + "/" + year;
 	}
 	
+	// fix format for entry in database
+	public String toSqlString() {
+		return year + "-" + month + "-" + day;
+	}
+	
 	public void incrementDay() { // rudimentary date system
 		if (day == 31) {
 			day = 1;

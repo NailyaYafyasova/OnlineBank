@@ -2,10 +2,12 @@ import java.util.ArrayList;
 
 public class Database {
 	
-	private static ArrayList<Client> clients = new ArrayList<Client>();
+	//private static ArrayList<Client> clients = new ArrayList<Client>();
+	private static ArrayList<Client> clients = BankDatabase.loadUsers();
 	
 	public Database() {
-		
+		// load all users held in the DB on startup
+		//clients.addAll(BankDatabase.loadUsers());
 	}
 	
 	public static void addClient(Client client) {

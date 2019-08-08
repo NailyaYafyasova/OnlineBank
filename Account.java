@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Account {
@@ -5,11 +6,13 @@ public class Account {
 	protected String type;
 	protected double balance;
 	protected Currency currency;
-	private String accountID;
+//	private String accountID;
+	protected String accountID;
 	protected Date dateOpened;
 	
-	protected Transaction[] transactions = new Transaction[64];
+	protected ArrayList<Transaction> transactions = new ArrayList<Transaction>();
 	protected int tindex = 0;
+	
 	
 	private Date globalDate; // MOVE SOMEWHERE ELSE? 
 	
@@ -34,6 +37,13 @@ public class Account {
 		accountID = String.format("%04d", random.nextInt(10000)); // 4 digit ID
 	}
 	
+	public Account(double amount, Currency curr, String accountID) {
+		balance = Math.round(amount * 100.00) / 100.00;;
+		currency = curr;
+		this.accountID = accountID;
+		this.transactions.addAll(BankDatabase.loadTransactions(accountID, this));
+	}
+	
 	public double getBalance() {
 		return balance;
 	}
@@ -51,7 +61,7 @@ public class Account {
 		return type;
 	}
 	
-	public Transaction[] getTransactions() {
+	public ArrayList<Transaction> getTransactions() {
 		return transactions;
 	}
 	
@@ -81,13 +91,16 @@ public class Account {
 	public boolean makeTransaction(String action, double amount, String reference, Date tdate) {
 		// new transaction(date, action, amount, account, reference)
 		
-		if (action.equals("payment")) { // sending money to a business
+		if (action.equals("payment")) { // sending money to a business or withdrawing
 			String type = "OUT";
 			Transaction t = null;
 			if (takeOut(amount) != -1)
 				// make transaction
 				t = new Transaction(tdate, this, amount, reference, type);
-				transactions[tindex] = t;
+				//transactions[tindex] = t;		remove this?
+			transactions.add(t);
+			BankDatabase.addTransaction(t,accountID);
+			BankDatabase.adjustAccountBalance(this, type);
 				tindex++;
 				return true;
 		}
@@ -97,7 +110,10 @@ public class Account {
 			deposit(amount, getCurrency());
 			// make transaction
 			t = new Transaction(tdate, this, amount, reference, type);
-			transactions[tindex] = t;
+			//transactions[tindex] = t;		remove this?
+			transactions.add(t);
+			BankDatabase.addTransaction(t, accountID);
+			BankDatabase.adjustAccountBalance(this, type);
 			tindex++;
 			return true;
 		}
@@ -109,7 +125,9 @@ public class Account {
 			deposit(amount, getCurrency());
 			// make transaction 
 			t = new Transaction(tdate, this, amount, reference, type);
-			transactions[tindex] = t;
+			transactions.add(t);
+			BankDatabase.addTransaction(t, accountID);
+			BankDatabase.adjustAccountBalance(this, type);
 			tindex++;
 			return true;
 		}
@@ -121,17 +139,22 @@ public class Account {
 	
 	
 	public boolean transfer(Account acc, double amount, Date tdate) {
-		if (this.getCurrency().equals(acc.getCurrency())) {
+		
+		if (this.getCurrency().getAcronym().equals(acc.getCurrency().getAcronym())) {
 			this.takeOut(amount);
-			acc.deposit(amount, currency);
-			Transaction t,t2 = null;
+			acc.deposit(amount, acc.getCurrency());
+			Transaction t,t2;
 			t = new Transaction(tdate, this, amount, "Transfer " + acc.getID(), "OUT");
-			transactions[tindex] = t;
-			tindex++;
 			t2 = new Transaction(tdate, acc, amount, "Transfer " + this.getID(), "IN");
-			acc.getTransactions()[acc.getTransactionIndex()] = t2;
-			acc.incrementTransactionIndex();
-			// TODO MAKE TRANSACTION ON THIS ACCOUNT AND ACC
+			
+			transactions.add(t);
+			acc.getTransactions().add(t2);
+			
+			BankDatabase.addTransaction(t, accountID);
+			BankDatabase.adjustAccountBalance(this, "OUT");
+			BankDatabase.addTransaction(t2, acc.getID());
+			BankDatabase.adjustAccountBalance(acc, "IN");
+			
 			return true;
 		}
 		else {
@@ -184,10 +207,10 @@ public class Account {
 	
 	public String displayTransactions() {
 		String res = "<html>";
-		for (int i = 0; i < transactions.length; i++) {
-			if (transactions[i] == null) 
+		for (int i = 0; i < transactions.size(); i++) {
+			if (transactions.get(i) == null) 
 				return res;
-			res+= transactions[i] + "<br/>";
+			res+= transactions.get(i) + "<br/>";
 		}
 		return res+"</html>";
 	}

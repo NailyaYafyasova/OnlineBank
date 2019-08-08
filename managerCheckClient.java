@@ -68,7 +68,7 @@ public class managerCheckClient extends JPanel {
 				String lastN = lnameField.getText();
 				String loginN = loginField.getText();
 				
-				JLabel checkClient = new JLabel( manager.checkClient(new Client(firstN, middleN, lastN, loginN)) );
+				JLabel checkClient = new JLabel( manager.checkClient(new Client(firstN, lastN, loginN)) );
 				JPanel clientPanel = new JPanel();
 				clientPanel.add(checkClient);
 				

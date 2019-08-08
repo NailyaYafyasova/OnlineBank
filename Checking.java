@@ -13,5 +13,11 @@ public class Checking extends Account {
 		super(amount,curr,date);
 		type = "Checking";
 	}
+	
+	public Checking(double amount, Currency curr, String accountid) {
+		super(amount, curr, accountid);
+		type = "Checking";
+	}
+	
 
 }
