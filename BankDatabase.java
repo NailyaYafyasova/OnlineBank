@@ -35,7 +35,27 @@ public class BankDatabase {
 			Statement createtable = DBconnect.createStatement();
 			createtable.execute("CREATE TABLE IF NOT EXISTS Clients(userID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, fname varchar(20), lname varchar(20), login varchar(25), password varchar(25))");
 			createtable.execute("CREATE TABLE IF NOT EXISTS Accounts(accountID INT NOT NULL PRIMARY KEY, type varchar(15), balance DOUBLE, currencyacr varchar(4), currencyname varchar(15), userID int, FOREIGN KEY (userID) REFERENCES Clients(userID))");
-			createtable.execute("CREATE TABLE IF NOT EXISTS Transactions(transactionID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, date  DATE NOT NULL, reference varchar(10), type varchar(15), newbalance DOUBLE, accountID INT, FOREIGN KEY (accountID) REFERENCES Accounts(accountID))");
+			createtable.execute("CREATE TABLE IF NOT EXISTS Transactions(transactionID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, date  DATE NOT NULL, reference varchar(30), type varchar(15), amount DOUBLE, newbalance DOUBLE, accountID INT, FOREIGN KEY (accountID) REFERENCES Accounts(accountID))");
+			createtable.execute("CREATE TABLE IF NOT EXISTS MarketBonds(bondID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name varchar(30), price DOUBLE, durationdays INT)");
+			createtable.execute("CREATE TABLE IF NOT EXISTS MarketStocks(stockID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  name varchar(30), ticker varchar(15), price DOUBLE");
+			//createtable.execute("CREATE TABLE IF NOT EXISTS Securities(securityID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, type varchar(10), quantity INT )");
+		}
+		
+		catch(Exception e) {
+			System.out.println(e);
+		}
+	}
+	
+	// populate securities (stocks)
+	public static void setMarketStocks() {
+		try {
+			Connection DBconnect = getConnection();
+			PreparedStatement create = DBconnect.prepareStatement("INSERT INTO MarketStocks(name, ticker, price) VALUES (Google, GOOGL, 6)");
+			create.executeUpdate();
+			create = DBconnect.prepareStatement("INSERT INTO MarketStocks(name, ticker, price) VALUES (Microsoft, MSFT, 4)");
+			create.executeUpdate();
+			create = DBconnect.prepareStatement("INSERT INTO MarketStocks(name, ticker, price) VALUES (Amazon, AMZN, 5)");
+			create.executeUpdate();
 		}
 		
 		catch(Exception e) {
@@ -128,6 +148,7 @@ public class BankDatabase {
 			Connection DBconnect = getConnection();
 			Statement stmt = DBconnect.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Clients");
+			
 			while (rs.next()) {
 				String currfname = rs.getString("fname");
 				String currlname = rs.getString("lname");
@@ -210,13 +231,14 @@ public class BankDatabase {
 					String currdate = transaction.getDateInitialized().toSqlString();
 					String currreference = transaction.getReference();
 					String currtype = transaction.getType();
+					double curramount = transaction.getAmount();
 					double currbalance = transaction.getNewBalance();
 					String curraccount = transaction.getAccountID();
 					Connection DBconnect = getConnection();
-					PreparedStatement create = DBconnect.prepareStatement("INSERT INTO Transactions(date, reference, type, newbalance, accountID) VALUES ('"+currdate+"', '"+currreference+"', '"+currtype+"', '"+currbalance+"', '"+curraccount+"')");
+					PreparedStatement create = DBconnect.prepareStatement("INSERT INTO Transactions(date, reference, type, amount, newbalance, accountID) VALUES ('"+currdate+"', '"+currreference+"', '"+currtype+"', '"+curramount+"', '"+currbalance+"', '"+curraccount+"')");
 					create.executeUpdate();
 					DBconnect.close();
-					System.out.println("New account has been added to the system.");
+					System.out.println("New transaction has been added to the system.");
 				}
 				
 				catch(Exception e) {
@@ -237,10 +259,12 @@ public class BankDatabase {
 				Date currdate = new Date(Integer.parseInt(currdatestring.substring(5, 6)), Integer.parseInt(currdatestring.substring(8)), Integer.parseInt(currdatestring.substring(0, 4)));
 				String currreference = rs.getString("reference");
 				String currtype = rs.getString("type");
+				Double curramount = rs.getDouble("amount");
 				Double currbalance = rs.getDouble("newbalance");
-				Transaction transaction = new Transaction(currdate, thisaccount,  currbalance, currreference, currtype, accountID);
+				Transaction transaction = new Transaction(currdate, thisaccount,  curramount, currbalance, currreference, currtype, accountID);
 				transactions.add(transaction);
 			}
+			DBconnect.close();
 			return transactions;
 		}
 		
@@ -250,16 +274,68 @@ public class BankDatabase {
 		}
 	}
 	
+	
 	// adjust balance of an account after a transaction
-	public static void adjustAccountBalance(Account curraccount) {
+	public static void adjustAccountBalance(Account account, String type) {
+		try {
+			Connection DBconnect = getConnection();
+			Statement stmt = DBconnect.createStatement();
+			double newamount = account.getBalance();
+			stmt.executeUpdate("UPDATE Accounts SET balance = " + newamount + " WHERE accountID = " + account.getID());
+			DBconnect.close();
+		}
 		
+		catch(Exception e) {
+			System.out.println(e);
+		}
 	}
 	
-	// Upon restart,
+	// see the available securities in the market (bonds)
+	
+	//public static ArrayList<Bond> getMarketBonds() {
+	//	try {
+	//		ArrayList<Bond> marketbonds = new ArrayList<Bond>();
+	//		Connection DBconnect = getConnection();
+	//		Statement stmt = DBconnect.createStatement();
+	//		ResultSet rs = stmt.executeQuery("SELECT * FROM MarketBonds");
+	//		while (rs.next()) {
+	//			Bond currbond = new Bond();
+	//		}
+	//		DBconnect.close();
+	//		return marketbonds;
+	//	}
+	//	
+	//	catch(Exception e) {
+	//		System.out.println(e);
+	//		return new ArrayList<Bond>();
+	//	}
+	//}
+	
+	// see the available securities in the market (stocks)
+	//public static ArrayList<Stock> getMarketStocks() {
+	//	try {
+	//		ArrayList<Stock> marketstocks = new ArrayList<Stock>();
+	//		Connection DBconnect = getConnection();
+	//		Statement stmt = DBconnect.createStatement();
+	//		ResultSet rs = stmt.executeQuery("SELECT * FROM MarketStocks");
+	//		while (rs.next()) {
+	//			StockSecurity.set();
+	//		}
+	//		DBconnect.close();
+	//		return marketstocks;
+	//	}
+	//	
+	//	catch(Exception e) {
+	//		System.out.println(e);
+	//		return new ArrayList<Stock>();
+	//	}
+	//}
+	
 	
 	// test methods that utilize the MySQL DB
 	public static void main(String args[]) throws Exception {
 		//initializeTable("testtable", "CREATE TABLE IT NOT EXISTS testtable(id int)");
 		initializeTables();
+		setMarketStocks();
 	}
 }
