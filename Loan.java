@@ -1,3 +1,4 @@
+package views;
 public class Loan extends Account {
 	private double amountOwed;
 	private double interest = 0.06;

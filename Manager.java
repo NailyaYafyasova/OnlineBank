@@ -1,3 +1,4 @@
+package views;
 public class Manager extends Person{
 
 	public Manager(String fname, String lname, String login) {

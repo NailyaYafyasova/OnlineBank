@@ -1,4 +1,4 @@
-
+package views;
 public class Stock extends Security {
 	protected StockSecurity stockItem;
 

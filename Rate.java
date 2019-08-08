@@ -1,3 +1,4 @@
+package views;
 public class Rate {
 	
 	private String acronym;

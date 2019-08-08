@@ -1,3 +1,4 @@
+package views;
 public class Currency {
 	private String acronym;
 	private String name;

@@ -1,3 +1,4 @@
+package views;
 public class Name {
 	private String fname, mname, lname; 
 	

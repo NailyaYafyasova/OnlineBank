@@ -1,4 +1,4 @@
-
+package views;
 public enum StockSecurity {
 	Apple(1, "APPL"),
 	Google(2, "GOOG");

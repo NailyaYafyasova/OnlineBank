@@ -1,3 +1,4 @@
+package views;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;

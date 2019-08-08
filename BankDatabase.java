@@ -1,3 +1,4 @@
+package views;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -89,7 +90,7 @@ public class BankDatabase {
 			// NOTE: MUST SPECIFY TIME ZONE IN THE URL BECAUSE IT IS REQUIRED NOW
 			String url = "jdbc:mysql://localhost:3306/BankData?serverTimezone=UTC";
 			String user = "root";
-			String pass = "";
+			String pass = "IplayguitaR7";
 			Class.forName(driver);
 
 			Connection conn = DriverManager.getConnection(url, user, pass);

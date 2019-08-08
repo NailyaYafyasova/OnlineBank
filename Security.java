@@ -1,4 +1,4 @@
-
+package views;
 public abstract class Security {
 	protected double buyPrice;
 	protected double currentPrice;

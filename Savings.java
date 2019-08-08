@@ -1,3 +1,4 @@
+package views;
 public class Savings extends Account {
 	private double interest = 0.05;
 	private double accrued;

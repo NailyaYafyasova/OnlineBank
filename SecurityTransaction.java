@@ -1,3 +1,4 @@
+package views;
 import java.util.function.ToDoubleBiFunction;
 
 public class SecurityTransaction extends Transaction {
